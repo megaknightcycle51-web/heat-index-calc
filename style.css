@@ -1,0 +1,135 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 40px;
+    max-width: 500px;
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    color: #2d3436;
+    margin-bottom: 30px;
+    font-size: 2em;
+}
+
+.input-section {
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2d3436;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #bdc3c7;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn-calculate {
+    width: 100%;
+    padding: 15px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-calculate:hover {
+    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-calculate:active {
+    transform: translateY(0);
+}
+
+.result-section {
+    margin-top: 30px;
+}
+
+.result-box {
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.result-label {
+    color: white;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.result-value {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.result-warning {
+    color: white;
+    font-size: 1.1em;
+    margin-top: 10px;
+}
+
+/* Color warnings based on heat index */
+.safe {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+}
+
+.caution {
+    background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+}
+
+.extreme-caution {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.danger {
+    background: linear-gradient(135deg, #8e44ad 0%, #6c3483 100%);
+}
+
+.extreme-danger {
+    background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+}
