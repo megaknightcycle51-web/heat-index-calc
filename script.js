@@ -69,24 +69,24 @@ function displayResult(heatIndexC) {
     resultValue.textContent = heatIndexC.toFixed(1) + '°C';
     
     // Remove all color classes
-    resultBox.classList.remove('safe', 'caution', 'extreme-caution', 'danger', 'extreme-danger');
+    resultBox.classList.remove('aman', 'peringatan', 'waspada', 'bahaya', 'ancaman');
     
     // Add appropriate color and warning
     if (heatIndexC < 27) {
-        resultBox.classList.add('safe');
-        resultWarning.textContent = 'Safe: No heat stress expected';
+        resultBox.classList.add('aman');
+        resultWarning.textContent = 'Aman: Tidak ada resiko heatstroke.';
     } else if (heatIndexC < 32) {
-        resultBox.classList.add('caution');
-        resultWarning.textContent = 'Caution: Risk of heat cramps and exhaustion';
+        resultBox.classList.add('peringatan');
+        resultWarning.textContent = 'Peringatan: Kemungkinan kecil terjadi kelelahan dan heat cramp bila melakukan aktvitas berat.';
     } else if (heatIndexC < 41) {
-        resultBox.classList.add('extreme-caution');
-        resultWarning.textContent = 'Extreme Caution: Risk of heat cramps and exhaustion';
+        resultBox.classList.add('waspada');
+        resultWarning.textContent = 'Waspada: Kemungkinan besar terjadi kelelahan dan heat cramp.';
     } else if (heatIndexC < 54) {
-        resultBox.classList.add('danger');
-        resultWarning.textContent = 'Danger: Risk of heat-related illness';
+        resultBox.classList.add('bahaya');
+        resultWarning.textContent = 'BAHAYA: Kemungkinan terjadi heatstroke bila terlalu lama terkspos.';
     } else {
-        resultBox.classList.add('extreme-danger');
-        resultWarning.textContent = 'Extreme Danger: Heat stroke likely!';
+        resultBox.classList.add('ancaman');
+        resultWarning.textContent = 'ANCAMAN: Heat stroke akan terjadi tanpa perlindungan!';
     }
 
     // Show result section
