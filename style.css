@@ -95,7 +95,7 @@ input:focus {
 }
 
 .result-label {
-    color: white;
+    color: rgb(255, 255, 255);
     font-size: 1.2em;
     margin-bottom: 10px;
 }
@@ -103,33 +103,33 @@ input:focus {
 .result-value {
     font-size: 2.5em;
     font-weight: bold;
-    color: white;
+    color: rgb(255, 255, 255);
     margin-bottom: 10px;
 }
 
 .result-warning {
-    color: white;
+    color: rgb(255, 255, 255);
     font-size: 1.1em;
     margin-top: 10px;
 }
 
 /* Color warnings based on heat index */
-.safe {
+.aman {
     background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
 }
 
-.caution {
+.peringatan {
     background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
 }
 
-.extreme-caution {
+.waspada {
     background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
 }
 
-.danger {
+.bahaya {
     background: linear-gradient(135deg, #8e44ad 0%, #6c3483 100%);
 }
 
-.extreme-danger {
+.ancaman {
     background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
 }
