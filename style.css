@@ -19,7 +19,7 @@ body {
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     padding: 40px;
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
 }
 
@@ -30,8 +30,17 @@ h1 {
     font-size: 2em;
 }
 
+h2 {
+    color: #2d3436;
+    font-size: 1.3em;
+    margin-bottom: 12px;
+}
+
+/* INPUT & CALCULATOR SECTION (TOP) */
 .input-section {
     margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #ecf0f1;
 }
 
 .input-group {
@@ -83,8 +92,11 @@ input:focus {
     transform: translateY(0);
 }
 
+/* RESULT SECTION (BELOW CALCULATOR) */
 .result-section {
-    margin-top: 30px;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #ecf0f1;
 }
 
 .result-box {
@@ -132,4 +144,78 @@ input:focus {
 
 .ancaman {
     background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+}
+
+/* DESCRIPTION SECTION - CLEAN BLOCK STYLE */
+.description-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.description-block {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    padding: 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.description-block:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateX(5px);
+}
+
+.description-block p {
+    color: #555;
+    line-height: 1.6;
+    font-size: 0.95em;
+}
+
+.description-block strong {
+    color: #2d3436;
+    font-weight: 600;
+}
+
+/* WARNING LIST STYLING */
+.warning-list {
+    list-style: none;
+    margin-top: 15px;
+    padding: 0;
+}
+
+.warning-list li {
+    padding: 12px;
+    margin-bottom: 10px;
+    background: white;
+    border-radius: 6px;
+    border-left: 3px solid #bdc3c7;
+    font-size: 0.95em;
+    line-height: 1.5;
+    color: #555;
+}
+
+.warning-safe {
+    color: #229954;
+    font-weight: bold;
+}
+
+.warning-caution {
+    color: #f39c12;
+    font-weight: bold;
+}
+
+.warning-alert {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.warning-danger {
+    color: #8e44ad;
+    font-weight: bold;
+}
+
+.warning-critical {
+    color: #2c3e50;
+    font-weight: bold;
 }
