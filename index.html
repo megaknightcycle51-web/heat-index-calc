@@ -2,60 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heat Index Calculator</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .calculator {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Heat Index Calculator</h1>
-        
-        <div class="description-section">
-            <p>
-                <b>Apa itu heat index?</b><br>
-                Heat Index (Juga dikenal sebagai suhu nyata) adalah suhu sebenarnya yang dirasakan oleh tubuh manusia ketika kelembapan relatif dikombinasikan dengan suhu udara.
-            </p>
-            <p>
-                <b>Bagaimana cara menghitung Heat Index?</b><br>
-                Dalam kalkulasi Heat Index, perubahan yang signifikan pada suhu udara baru akan muncul pada suhu <b>minimal 27°C</b> dan kelembapan udara <b>minimal 40%</b><br>
-            </p>
-            <p>
-                <b>Cara penggunaan:</b><br>
-                Masukan nilai suhu udara kedalam kolom "Temperature (°C):" dan kelembapan relatif ke dalam kolom "Humidity (%):"
-            </p>
-            <p>
-                <b>Warning table:</b>
-                <ul>
-                    <li><span style="color: #229954; font-weight:bold;">Aman:</span> &lt; 27°C — Tidak ada resiko heatstroke.</li>
-                    <li><span style="color: #f39c12; font-weight:bold;">Peringatan:</span> 27–32°C — Kemungkinan kecil terjadi kelelahan dan heat cramp bila melakukan aktvitas berat.</li>
-                    <li><span style="color: #e74c3c; font-weight:bold;">Waspada:</span> 32–41°C — Kemungkinan besar terjadi kelelahan dan heat cramp.</li>
-                    <li><span style="color: #8e44ad; font-weight:bold;">Bahaya:</span> 41–54°C — Kemungkinan terjadi heatstroke bila terlalu lama terkspos.</li>
-                    <li><span style="color: #000; font-weight:bold;">Ancaman:</span> &gt;= 54°C — Heat stroke akan terjadi tanpa perlindungan!</li>
-                </ul>
-            </p>
-        </div>
-
-        <div class="input-section">
-            <div class="input-group">
-                <label for="temperature">Temperature (°C):</label>
-                <input type="number" id="temperature" placeholder="Enter temperature" step="0.1">
-            </div>
-            <div class="input-group">
-                <label for="humidity">Humidity (%):</label>
-                <input type="number" id="humidity" placeholder="Enter humidity" min="0" max="100" step="0.1">
-            </div>
-            <button class="btn-calculate">Calculate Heat Index</button>
-        </div>
-
-        <div class="result-section" id="resultSection" style="display:none;">
-            <div class="result-box" id="resultBox">
-                <p class="result-label">Heat Index:</p>
-                <p class="result-value" id="resultValue">--°C</p>
-                <p class="result-warning" id="resultWarning"></p>
-            </div>
-        </div>
+    <h1>Welcome to the Heat Index Calculator</h1>
+    <div class="calculator">
+        <!-- Your calculator implementation goes here -->
     </div>
-    <script src="script.js"></script>
+    <div class="description">
+        <h2>Descriptive Text</h2>
+        <p>This calculator helps in determining the heat index, which is a measure of how hot it feels when relative humidity is factored in with the actual air temperature.</p>
+    </div>
 </body>
-</html>
 </html>
