@@ -38,7 +38,7 @@ function calculateHeatIndex(temperature, humidity) {
 // Function to determine warning level and message
 function getWarningLevel(heatIndex) {
     if (heatIndex < 27) {
-        return { level: 'Aman', message: 'Tidak ada resiko heatstroke.', color: '#00ff22' }; 
+        return { level: 'Aman', message: 'Tidak ada resiko heatstroke.', color: '#3CB043' }; 
     } else if (heatIndex < 32) {
         return { level: 'Peringatan', message: 'Kemungkinan kecil terjadi kelelahan dan heat cramp bila melakukan aktivitas berat.', color: '#ff9d00' }; 
     } else if (heatIndex < 41) {
