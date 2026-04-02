@@ -1,10 +1,5 @@
 // Heat Index Calculation Function
 function calculateHeatIndex(temperature, humidity) {
-    // Only calculate if temperature is 27°C or higher (per requirements)
-    if (temperature < 27) {
-        return temperature;
-    }
-
     // Convert °C to °F — Steadman formula requires Fahrenheit
     let t = temperature * 9/5 + 32;
     let rh = humidity;
@@ -33,12 +28,15 @@ function calculateHeatIndex(temperature, humidity) {
     }
 
     // Convert result back to °C
-    return (heatIndex - 32) * 5/9;
+    heatIndex = (heatIndex - 32) * 5/9;
+
+    // Always return whichever is higher — actual temp or heat index
+    return Math.max(temperature, heatIndex);
 }
 // Function to determine warning level and message
 function getWarningLevel(heatIndex) {
     if (heatIndex < 27) {
-        return { level: 'Aman', message: 'Tidak ada resiko heatstroke.', color: '#3CB043' }; 
+        return { level: 'Aman', message: 'Tidak ada resiko heatstroke.', color: '#00ff22' }; 
     } else if (heatIndex < 32) {
         return { level: 'Peringatan', message: 'Kemungkinan kecil terjadi kelelahan dan heat cramp bila melakukan aktivitas berat.', color: '#ff9d00' }; 
     } else if (heatIndex < 41) {
