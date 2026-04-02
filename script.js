@@ -29,11 +29,16 @@ function calculateHeatIndex(temperature, humidity) {
 // Function to determine warning level and message
 function getWarningLevel(heatIndex) {
     if (heatIndex < 27) {
-        return { level: 'Aman', message: 'Tidak ada resiko heatstroke.', color: '#00ff22' };\n    } else if (heatIndex < 32) {
-        return { level: 'Peringatan', message: 'Kemungkinan kecil terjadi kelelahan dan heat cramp bila melakukan aktivitas berat.', color: '#ff9d00' };\n    } else if (heatIndex < 41) {
-        return { level: 'Waspada', message: 'Kemungkinan besar terjadi kelelahan dan heat cramp.', color: '#ff1900' };\n    } else if (heatIndex < 54) {
-        return { level: 'Bahaya', message: 'Kemungkinan terjadi heatstroke bila terlalu lama terekspos.', color: '#b300ff' };\n    } else {
-        return { level: 'Ancaman', message: 'Heat stroke akan terjadi tanpa perlindungan!', color: '#1f2933' };\n    }
+        return { level: 'Aman', message: 'Tidak ada resiko heatstroke.', color: '#00ff22' }; 
+    } else if (heatIndex < 32) {
+        return { level: 'Peringatan', message: 'Kemungkinan kecil terjadi kelelahan dan heat cramp bila melakukan aktivitas berat.', color: '#ff9d00' }; 
+    } else if (heatIndex < 41) {
+        return { level: 'Waspada', message: 'Kemungkinan besar terjadi kelelahan dan heat cramp.', color: '#ff1900' }; 
+    } else if (heatIndex < 54) {
+        return { level: 'Bahaya', message: 'Kemungkinan terjadi heatstroke bila terlalu lama terekspos.', color: '#b300ff' }; 
+    } else {
+        return { level: 'Ancaman', message: 'Heat stroke akan terjadi tanpa perlindungan!', color: '#1f2933' }; 
+    }
 }
 
 // Display result function
@@ -48,7 +53,7 @@ function displayResult(heatIndex, warning) {
     
     // Set color based on warning level
     resultBox.style.borderColor = warning.color;
-    resultBox.style.backgroundColor = warning.color; // Full vibrant color
+    resultBox.style.backgroundColor = warning.color;
     
     resultSection.style.display = 'block';
 }
@@ -83,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Allow Enter key to trigger calculation
-document.getElementById('temperature').addEventListener('keypress', function(e) {
+    document.getElementById('temperature').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') document.querySelector('.btn-calculate').click();
     });
     
