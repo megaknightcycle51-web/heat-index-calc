@@ -127,7 +127,7 @@ input:focus {
 
 /* Color warnings based on heat index */
 .aman {
-    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    background: linear-gradient(135deg, #00ff6a 0%, #00ff6a 100%);
 }
 
 .peringatan {
@@ -187,7 +187,7 @@ input:focus {
 .warning-list li {
     padding: 12px;
     margin-bottom: 10px;
-    background: white;
+    background: rgb(255, 255, 255);
     border-radius: 6px;
     border-left: 3px solid #bdc3c7;
     font-size: 0.95em;
