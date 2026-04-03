@@ -1,3 +1,22 @@
+/**
+ * Calculate Heat Index in Celsius using NOAA's official method.
+ * 
+ * Implementation follows NOAA Technical Attachment SR 90-23:
+ * https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml
+ * 
+ * The method:
+ * 1. Convert Celsius to Fahrenheit
+ * 2. Compute simple ("Steadman") formula
+ * 3. Average simple result with actual temperature
+ * 4. If average >= 80°F, apply full Rothfusz regression with adjustments
+ * 5. Otherwise, use the averaged simple result
+ * 6. Convert final result back to Celsius
+ * 
+ * @param {number} temperatureCelsius - Air temperature in degrees Celsius
+ * @param {number} relativeHumidity - Relative humidity as a percentage (0-100)
+ * @returns {number} Heat Index in degrees Celsius (rounded to 1 decimal place),
+ *                   or null if inputs are invalid
+ */
 function calculateHeatIndexCelsius(temperatureCelsius, relativeHumidity) {
     // ========== INPUT VALIDATION ==========
     if (typeof temperatureCelsius !== 'number' || typeof relativeHumidity !== 'number') {
@@ -11,25 +30,28 @@ function calculateHeatIndexCelsius(temperatureCelsius, relativeHumidity) {
     // Clamp humidity to valid range [0, 100]
     const humidity = Math.max(0, Math.min(100, relativeHumidity));
     
-    // ========== TEMPERATURE CONVERSION ==========
-    // Convert Celsius to Fahrenheit (Rothfusz formula requires Fahrenheit)
+    // ========== CONVERT CELSIUS TO FAHRENHEIT ==========
     const temperatureFahrenheit = (temperatureCelsius * 9/5) + 32;
-    
-    // ========== SPECIAL CASE: LOW TEMPERATURE ==========
-    // Below 80°F (26.67°C), use simplified formula and average with actual temp
-    if (temperatureFahrenheit < 80) {
-        const simplifiedHI = 0.5 * (temperatureFahrenheit + 61.0 + 
-                                    ((temperatureFahrenheit - 68.0) * 1.2) + 
-                                    (humidity * 0.094));
-        const heatIndexFahrenheit = (simplifiedHI + temperatureFahrenheit) / 2;
-        return convertFahrenheitToCelsius(heatIndexFahrenheit);
-    }
-    
-    // ========== ROTHFUSZ REGRESSION (for T >= 80°F) ==========
     const t = temperatureFahrenheit;
     const rh = humidity;
     
-    // Regression coefficients
+    // ========== STEP 1: COMPUTE SIMPLE FORMULA ==========
+    // HI = 0.5 * {T + 61.0 + [(T-68.0)*1.2] + (RH*0.094)}
+    const simpleFormula = 0.5 * (t + 61.0 + ((t - 68.0) * 1.2) + (rh * 0.094));
+    
+    // ========== STEP 2: AVERAGE SIMPLE FORMULA WITH ACTUAL TEMPERATURE ==========
+    const averagedHI = (simpleFormula + t) / 2;
+    
+    // ========== STEP 3: DETERMINE IF ROTHFUSZ REGRESSION IS NEEDED ==========
+    // If averaged result is below 80°F, use it as-is (no Rothfusz)
+    if (averagedHI < 80) {
+        return convertFahrenheitToCelsius(averagedHI);
+    }
+    
+    // ========== STEP 4: APPLY ROTHFUSZ REGRESSION ==========
+    // Only used when the averaged simple formula result is >= 80°F
+    
+    // Rothfusz regression coefficients
     const c1 = -42.379;
     const c2 = 2.04901523;
     const c3 = 10.14333127;
@@ -40,7 +62,7 @@ function calculateHeatIndexCelsius(temperatureCelsius, relativeHumidity) {
     const c8 = 0.00085282;
     const c9 = -0.00000199;
     
-    // Calculate base heat index using Rothfusz regression
+    // HI = c1 + c2*T + c3*RH + c4*T*RH + c5*T² + c6*RH² + c7*T²*RH + c8*T*RH² + c9*T²*RH²
     let heatIndexFahrenheit = c1 + 
                               (c2 * t) + 
                               (c3 * rh) + 
@@ -51,27 +73,29 @@ function calculateHeatIndexCelsius(temperatureCelsius, relativeHumidity) {
                               (c8 * t * rh * rh) + 
                               (c9 * t * t * rh * rh);
     
-    // ========== LOW HUMIDITY ADJUSTMENT ==========
-    // Applied when RH < 13% and temp is between 80°F and 112°F
+    // ========== STEP 5: APPLY LOW HUMIDITY ADJUSTMENT ==========
+    // Subtracted from HI when: RH < 13% AND T is between 80°F and 112°F
+    // ADJUSTMENT = [(13-RH)/4] * SQRT{[17-ABS(T-95)]/17}
     if (rh < 13 && t >= 80 && t <= 112) {
         const lowHumidityAdjustment = ((13 - rh) / 4) * 
                                       Math.sqrt((17 - Math.abs(t - 95)) / 17);
         heatIndexFahrenheit -= lowHumidityAdjustment;
     }
-    
-    // ========== HIGH HUMIDITY ADJUSTMENT ==========
-    // Applied when RH > 85% and temp is between 80°F and 87°F
+    // ========== STEP 6: APPLY HIGH HUMIDITY ADJUSTMENT ==========
+    // Added to HI when: RH > 85% AND T is between 80°F and 87°F
+    // ADJUSTMENT = [(RH-85)/10] * [(87-T)/5]
     else if (rh > 85 && t >= 80 && t <= 87) {
         const highHumidityAdjustment = ((rh - 85) / 10) * ((87 - t) / 5);
         heatIndexFahrenheit += highHumidityAdjustment;
     }
     
-    // ========== CONVERT BACK TO CELSIUS ==========
+    // ========== CONVERT RESULT BACK TO CELSIUS ==========
     return convertFahrenheitToCelsius(heatIndexFahrenheit);
 }
 
 /**
- * Convert temperature from Fahrenheit to Celsius.
+ * Convert temperature from Fahrenheit to Celsius and round to 1 decimal place.
+ * 
  * @param {number} fahrenheit - Temperature in degrees Fahrenheit
  * @returns {number} Temperature in degrees Celsius (rounded to 1 decimal place)
  */
@@ -82,12 +106,17 @@ function convertFahrenheitToCelsius(fahrenheit) {
 
 /**
  * Determine the heat stress warning level based on heat index.
+ * 
  * @param {number} heatIndexCelsius - Heat index in degrees Celsius
  * @returns {Object} Object with level, message, and color properties
  */
 function getWarningLevel(heatIndexCelsius) {
     if (heatIndexCelsius == null) {
-        return { level: 'Error', message: 'Invalid input values.', color: '#808080' };
+        return { 
+            level: 'Error', 
+            message: 'Invalid input values.', 
+            color: '#808080' 
+        };
     }
     
     if (heatIndexCelsius < 27) {
@@ -125,6 +154,7 @@ function getWarningLevel(heatIndexCelsius) {
 
 /**
  * Display the calculated heat index and warning level on the page.
+ * 
  * @param {number} heatIndexCelsius - Heat index in degrees Celsius
  * @param {Object} warning - Warning level object from getWarningLevel()
  */
@@ -155,13 +185,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const temperatureInput = document.getElementById('temperature');
     const humidityInput = document.getElementById('humidity');
     
-    if (!calculateBtn) {
-        console.error('Calculate button not found');
+    if (!calculateBtn || !temperatureInput || !humidityInput) {
+        console.error('Required DOM elements not found');
         return;
     }
     
     /**
-     * Handle the calculation when the button is clicked or Enter is pressed.
+     * Perform heat index calculation and display result.
      */
     function performCalculation() {
         const temperature = parseFloat(temperatureInput.value);
