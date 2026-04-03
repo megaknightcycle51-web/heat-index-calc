@@ -1,9 +1,10 @@
-// Heat Index Calculation Function
-function calculateHeatIndex(temperature, humidity) {
-    // Convert °C to °F — Steadman formula requires Fahrenheit
-    let t = temperature * 9/5 + 32;
+// Heat Index Calculation Function (Celsius version)
+function calculateHeatIndex(temperatureCelsius, humidity) {
+    // Convert °C to °F for the Steadman formula
+    let t = temperatureCelsius * 9/5 + 32;
     let rh = humidity;
 
+    // Steadman formula constants
     let c1 = -42.379;
     let c2 = 2.04901523;
     let c3 = 10.14333127;
@@ -14,15 +15,20 @@ function calculateHeatIndex(temperature, humidity) {
     let c8 = 0.00085282;
     let c9 = -0.00000199;
 
+    // Only calculate if conditions warrant it (temp >= 27°C / 80.6°F and humidity >= 40%)
+    if (temperatureCelsius < 27 || humidity < 40) {
+        return temperatureCelsius; // Return actual temp if conditions don't warrant heat index
+    }
+
     let heatIndex = c1 + (c2 * t) + (c3 * rh) + (c4 * t * rh) +
                     (c5 * t * t) + (c6 * rh * rh) + (c7 * t * t * rh) +
                     (c8 * t * rh * rh) + (c9 * t * t * rh * rh);
 
-    // Low-humidity adjustment
+    // Low-humidity adjustment (for very low humidity)
     if (rh < 13 && t >= 80 && t <= 112) {
         heatIndex -= ((13 - rh) / 4) * Math.sqrt((17 - Math.abs(t - 95)) / 17);
     }
-    // High-humidity adjustment
+    // High-humidity adjustment (for very high humidity)
     else if (rh > 85 && t >= 80 && t <= 87) {
         heatIndex += ((rh - 85) / 10) * ((87 - t) / 5);
     }
@@ -30,9 +36,10 @@ function calculateHeatIndex(temperature, humidity) {
     // Convert result back to °C
     heatIndex = (heatIndex - 32) * 5/9;
 
-    // Always return whichever is higher — actual temp or heat index
-    return Math.max(temperature, heatIndex);
+    // Return whichever is higher — actual temp or calculated heat index
+    return Math.max(temperatureCelsius, heatIndex);
 }
+
 // Function to determine warning level and message
 function getWarningLevel(heatIndex) {
     if (heatIndex < 27) {
@@ -47,6 +54,7 @@ function getWarningLevel(heatIndex) {
         return { level: 'Ancaman', message: 'Heat stroke akan terjadi tanpa perlindungan!', color: '#1f2933' }; 
     }
 }
+
 // Display result function
 function displayResult(heatIndex, warning) {
     let resultSection = document.getElementById('resultSection');
@@ -63,6 +71,7 @@ function displayResult(heatIndex, warning) {
     
     resultSection.style.display = 'block';
 }
+
 // Event listener for Calculate button
 document.addEventListener('DOMContentLoaded', function() {
     let calculateBtn = document.querySelector('.btn-calculate');
