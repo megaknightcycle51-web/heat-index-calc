@@ -1,86 +1,173 @@
-// Heat Index Calculation Function (Celsius version)
-function calculateHeatIndex(temperatureCelsius, humidity) {
-    // Convert °C to °F for the Steadman formula
-    let t = temperatureCelsius * 9/5 + 32;
-    let rh = humidity;
-
-    // Steadman formula constants
-    let c1 = -42.379;
-    let c2 = 2.04901523;
-    let c3 = 10.14333127;
-    let c4 = -0.22475541;
-    let c5 = -0.00683783;
-    let c6 = -0.05481717;
-    let c7 = 0.00122874;
-    let c8 = 0.00085282;
-    let c9 = -0.00000199;
-
-    // Only calculate if conditions warrant it (temp >= 27°C / 80.6°F and humidity >= 40%)
-    if (temperatureCelsius < 27 || humidity < 40) {
-        return temperatureCelsius; // Return actual temp if conditions don't warrant heat index
+function calculateHeatIndexCelsius(temperatureCelsius, relativeHumidity) {
+    // ========== INPUT VALIDATION ==========
+    if (typeof temperatureCelsius !== 'number' || typeof relativeHumidity !== 'number') {
+        return null;
     }
-
-    let heatIndex = c1 + (c2 * t) + (c3 * rh) + (c4 * t * rh) +
-                    (c5 * t * t) + (c6 * rh * rh) + (c7 * t * t * rh) +
-                    (c8 * t * rh * rh) + (c9 * t * t * rh * rh);
-
-    // Low-humidity adjustment (for very low humidity)
-    if (rh < 13 && t >= 80 && t <= 112) {
-        heatIndex -= ((13 - rh) / 4) * Math.sqrt((17 - Math.abs(t - 95)) / 17);
-    }
-    // High-humidity adjustment (for very high humidity)
-    else if (rh > 85 && t >= 80 && t <= 87) {
-        heatIndex += ((rh - 85) / 10) * ((87 - t) / 5);
-    }
-
-    // Convert result back to °C
-    heatIndex = (heatIndex - 32) * 5/9;
-
-    // Return whichever is higher — actual temp or calculated heat index
-    return Math.max(temperatureCelsius, heatIndex);
-}
-
-// Function to determine warning level and message
-function getWarningLevel(heatIndex) {
-    if (heatIndex < 27) {
-        return { level: 'Aman', message: 'Tidak ada resiko heatstroke.', color: '#00ff22' }; 
-    } else if (heatIndex < 32) {
-        return { level: 'Peringatan', message: 'Kemungkinan kecil terjadi kelelahan dan heat cramp bila melakukan aktivitas berat.', color: '#ff9d00' }; 
-    } else if (heatIndex < 41) {
-        return { level: 'Waspada', message: 'Kemungkinan besar terjadi kelelahan dan heat cramp.', color: '#ff1900' }; 
-    } else if (heatIndex < 54) {
-        return { level: 'Bahaya', message: 'Kemungkinan terjadi heatstroke bila terlalu lama terekspos.', color: '#b300ff' }; 
-    } else {
-        return { level: 'Ancaman', message: 'Heat stroke akan terjadi tanpa perlindungan!', color: '#1f2933' }; 
-    }
-}
-
-// Display result function
-function displayResult(heatIndex, warning) {
-    let resultSection = document.getElementById('resultSection');
-    let resultValue = document.getElementById('resultValue');
-    let resultWarning = document.getElementById('resultWarning');
-    let resultBox = document.getElementById('resultBox');
     
-    resultValue.textContent = heatIndex.toFixed(2) + '°C';
+    if (!isFinite(temperatureCelsius) || !isFinite(relativeHumidity)) {
+        return null;
+    }
+    
+    // Clamp humidity to valid range [0, 100]
+    const humidity = Math.max(0, Math.min(100, relativeHumidity));
+    
+    // ========== TEMPERATURE CONVERSION ==========
+    // Convert Celsius to Fahrenheit (Rothfusz formula requires Fahrenheit)
+    const temperatureFahrenheit = (temperatureCelsius * 9/5) + 32;
+    
+    // ========== SPECIAL CASE: LOW TEMPERATURE ==========
+    // Below 80°F (26.67°C), use simplified formula and average with actual temp
+    if (temperatureFahrenheit < 80) {
+        const simplifiedHI = 0.5 * (temperatureFahrenheit + 61.0 + 
+                                    ((temperatureFahrenheit - 68.0) * 1.2) + 
+                                    (humidity * 0.094));
+        const heatIndexFahrenheit = (simplifiedHI + temperatureFahrenheit) / 2;
+        return convertFahrenheitToCelsius(heatIndexFahrenheit);
+    }
+    
+    // ========== ROTHFUSZ REGRESSION (for T >= 80°F) ==========
+    const t = temperatureFahrenheit;
+    const rh = humidity;
+    
+    // Regression coefficients
+    const c1 = -42.379;
+    const c2 = 2.04901523;
+    const c3 = 10.14333127;
+    const c4 = -0.22475541;
+    const c5 = -0.00683783;
+    const c6 = -0.05481717;
+    const c7 = 0.00122874;
+    const c8 = 0.00085282;
+    const c9 = -0.00000199;
+    
+    // Calculate base heat index using Rothfusz regression
+    let heatIndexFahrenheit = c1 + 
+                              (c2 * t) + 
+                              (c3 * rh) + 
+                              (c4 * t * rh) + 
+                              (c5 * t * t) + 
+                              (c6 * rh * rh) + 
+                              (c7 * t * t * rh) + 
+                              (c8 * t * rh * rh) + 
+                              (c9 * t * t * rh * rh);
+    
+    // ========== LOW HUMIDITY ADJUSTMENT ==========
+    // Applied when RH < 13% and temp is between 80°F and 112°F
+    if (rh < 13 && t >= 80 && t <= 112) {
+        const lowHumidityAdjustment = ((13 - rh) / 4) * 
+                                      Math.sqrt((17 - Math.abs(t - 95)) / 17);
+        heatIndexFahrenheit -= lowHumidityAdjustment;
+    }
+    
+    // ========== HIGH HUMIDITY ADJUSTMENT ==========
+    // Applied when RH > 85% and temp is between 80°F and 87°F
+    else if (rh > 85 && t >= 80 && t <= 87) {
+        const highHumidityAdjustment = ((rh - 85) / 10) * ((87 - t) / 5);
+        heatIndexFahrenheit += highHumidityAdjustment;
+    }
+    
+    // ========== CONVERT BACK TO CELSIUS ==========
+    return convertFahrenheitToCelsius(heatIndexFahrenheit);
+}
+
+/**
+ * Convert temperature from Fahrenheit to Celsius.
+ * @param {number} fahrenheit - Temperature in degrees Fahrenheit
+ * @returns {number} Temperature in degrees Celsius (rounded to 1 decimal place)
+ */
+function convertFahrenheitToCelsius(fahrenheit) {
+    const celsius = (fahrenheit - 32) * 5/9;
+    return Math.round(celsius * 10) / 10; // Round to 1 decimal place
+}
+
+/**
+ * Determine the heat stress warning level based on heat index.
+ * @param {number} heatIndexCelsius - Heat index in degrees Celsius
+ * @returns {Object} Object with level, message, and color properties
+ */
+function getWarningLevel(heatIndexCelsius) {
+    if (heatIndexCelsius == null) {
+        return { level: 'Error', message: 'Invalid input values.', color: '#808080' };
+    }
+    
+    if (heatIndexCelsius < 27) {
+        return {
+            level: 'Aman',
+            message: 'Tidak ada resiko heatstroke.',
+            color: '#00ff22'
+        };
+    } else if (heatIndexCelsius < 32) {
+        return {
+            level: 'Peringatan',
+            message: 'Kemungkinan kecil terjadi kelelahan dan heat cramp bila melakukan aktivitas berat.',
+            color: '#ff9d00'
+        };
+    } else if (heatIndexCelsius < 41) {
+        return {
+            level: 'Waspada',
+            message: 'Kemungkinan besar terjadi kelelahan dan heat cramp.',
+            color: '#ff1900'
+        };
+    } else if (heatIndexCelsius < 54) {
+        return {
+            level: 'Bahaya',
+            message: 'Kemungkinan terjadi heatstroke bila terlalu lama terekspos.',
+            color: '#b300ff'
+        };
+    } else {
+        return {
+            level: 'Ancaman',
+            message: 'Heat stroke akan terjadi tanpa perlindungan!',
+            color: '#1f2933'
+        };
+    }
+}
+
+/**
+ * Display the calculated heat index and warning level on the page.
+ * @param {number} heatIndexCelsius - Heat index in degrees Celsius
+ * @param {Object} warning - Warning level object from getWarningLevel()
+ */
+function displayResult(heatIndexCelsius, warning) {
+    const resultSection = document.getElementById('resultSection');
+    const resultValue = document.getElementById('resultValue');
+    const resultWarning = document.getElementById('resultWarning');
+    const resultBox = document.getElementById('resultBox');
+    
+    if (!resultSection || !resultValue || !resultWarning || !resultBox) {
+        console.error('Result display elements not found in DOM');
+        return;
+    }
+    
+    resultValue.textContent = heatIndexCelsius.toFixed(1) + '°C';
     resultWarning.textContent = warning.level + ': ' + warning.message;
     
-    // Set color based on warning level
+    // Set colors based on warning level
     resultBox.style.borderColor = warning.color;
     resultBox.style.backgroundColor = warning.color;
     
     resultSection.style.display = 'block';
 }
 
-// Event listener for Calculate button
+// ========== EVENT LISTENERS & DOM INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
-    let calculateBtn = document.querySelector('.btn-calculate');
+    const calculateBtn = document.querySelector('.btn-calculate');
+    const temperatureInput = document.getElementById('temperature');
+    const humidityInput = document.getElementById('humidity');
     
-    calculateBtn.addEventListener('click', function() {
-        let temperature = parseFloat(document.getElementById('temperature').value);
-        let humidity = parseFloat(document.getElementById('humidity').value);
+    if (!calculateBtn) {
+        console.error('Calculate button not found');
+        return;
+    }
+    
+    /**
+     * Handle the calculation when the button is clicked or Enter is pressed.
+     */
+    function performCalculation() {
+        const temperature = parseFloat(temperatureInput.value);
+        const humidity = parseFloat(humidityInput.value);
         
-        // Validation
+        // Validate inputs
         if (isNaN(temperature) || isNaN(humidity)) {
             alert('Please enter both temperature and humidity values');
             return;
@@ -92,21 +179,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Calculate heat index
-        let heatIndex = calculateHeatIndex(temperature, humidity);
+        const heatIndex = calculateHeatIndexCelsius(temperature, humidity);
         
-        // Get warning level
-        let warning = getWarningLevel(heatIndex);
+        if (heatIndex === null) {
+            alert('An error occurred during calculation. Please check your inputs.');
+            return;
+        }
         
-        // Display result
+        // Get warning level and display result
+        const warning = getWarningLevel(heatIndex);
         displayResult(heatIndex, warning);
+    }
+    
+    // Calculate on button click
+    calculateBtn.addEventListener('click', performCalculation);
+    
+    // Calculate on Enter key press in input fields
+    temperatureInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performCalculation();
+        }
     });
     
-    // Allow Enter key to trigger calculation
-    document.getElementById('temperature').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') document.querySelector('.btn-calculate').click();
-    });
-    
-    document.getElementById('humidity').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') document.querySelector('.btn-calculate').click();
+    humidityInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performCalculation();
+        }
     });
 });
