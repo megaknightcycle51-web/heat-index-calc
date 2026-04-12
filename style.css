@@ -149,6 +149,50 @@ input:focus {
     color: #2d3436;
     font-weight: 600;
 }
+/* HEAT TABLE STYLING */
+.heat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.heat-table thead {
+    background: #667eea;
+    color: white;
+}
+
+.heat-table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.heat-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ecf0f1;
+    color: #555;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.heat-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.heat-table tbody tr:hover {
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+}
+
+.heat-table tbody tr:nth-child(odd) {
+    background-color: #fafafa;
+}
+
 /* WARNING LIST STYLING */
 .warning-list {
     list-style: none;
