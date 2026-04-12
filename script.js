@@ -123,7 +123,7 @@ function getWarningLevel(heatIndexCelsius) {
         return {
             level: 'Aman',
             message: 'Tidak ada resiko heatstroke.',
-            color: '#00ff22'
+            color: '#31e048'
         };
     } else if (heatIndexCelsius < 32) {
         return {
@@ -235,5 +235,35 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter') {
             performCalculation();
         }
+    });
+
+    // ========== COLLAPSIBLE WARNING ITEMS ==========
+    const warningItems = document.querySelectorAll('.warning-item');
+    
+    warningItems.forEach(item => {
+        const header = item.querySelector('.warning-header');
+        const details = item.querySelector('.warning-details');
+        const arrow = item.querySelector('.arrow-toggle');
+        
+        header.addEventListener('click', function() {
+            const isOpen = details.classList.contains('open');
+            
+            // Close all other open items
+            warningItems.forEach(otherItem => {
+                if (otherItem !== item) {
+                    otherItem.querySelector('.warning-details').classList.remove('open');
+                    otherItem.querySelector('.arrow-toggle').classList.remove('open');
+                }
+            });
+            
+            // Toggle current item
+            if (isOpen) {
+                details.classList.remove('open');
+                arrow.classList.remove('open');
+            } else {
+                details.classList.add('open');
+                arrow.classList.add('open');
+            }
+        });
     });
 });
