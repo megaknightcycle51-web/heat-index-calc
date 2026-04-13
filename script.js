@@ -123,7 +123,7 @@ function getWarningLevel(heatIndexCelsius) {
         return {
             level: 'Aman',
             message: 'Tidak ada resiko heatstroke.',
-            color: '#31e048'
+            color: '#00ff22'
         };
     } else if (heatIndexCelsius < 32) {
         return {
